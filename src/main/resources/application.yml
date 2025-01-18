@@ -1,0 +1,54 @@
+server:
+  port: 6565
+
+mybatis-plus:
+  mapper-locations: classpath:com/yy/linxiweb/mapper/*Mapper.xml
+  type-aliases-package: com.yy.linxiweb.po
+  configuration:
+    map-underscore-to-camel-case: true
+    auto-mapping-behavior: full
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+
+flowable:
+  #关闭定时任务JOB
+  async-executor-activate: false
+  #database-schema-update: false
+
+spring:
+  profiles:
+    active: database
+  jpa:
+    database: MYSQL
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQLDialect
+    show-sql: false
+  mvc:
+    path-match:
+      matching-strategy: ant_path_matcher
+
+  # 文件上传
+  servlet:
+    multipart:
+      # 单个文件大小
+      max-file-size: 50MB
+      # 设置总上传的文件大小
+      max-request-size: 250MB
+
+springdoc:
+  api-docs:
+    enabled: true # 开启OpenApi接口
+    path: /v3/api-docs  # 自定义路径，默认为 "/v3/api-docs"
+  swagger-ui:
+    enabled: true # 开启swagger界面，依赖OpenApi，需要OpenApi同时开启
+    path: /swagger-ui/index.html # 自定义路径，默认为"/swagger-ui/index.html"
+
+logging:
+  config: classpath:logback-spring.xml
+  # 配置security日志级别
+  level:
+    org:
+      ehcache:
+        sizeof:
+          ObjectGraphWalker: error
+

@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<configuration>
+    <property name="log.home" value="D:/log/platform"/>
+    <!--格式化输出：%d表示日期，%thread表示线程名，%-5level：级别从左显示5个字符宽度%msg：日志消息，%n是换行符-->
+    <property name="FILE_LOG_PATTERN" value="[%d{yyyy-MM-dd' 'HH:mm:ss}] [%C] [%t] [%L] [%-5p] %m%n"/>
+    <property name="log.level" value="DEBUG"/>
+    <property name="log.max.file.size" value="100MB"/>
+    <property name="log.max.history" value="72"/>
+    <property name="log.queueSize" value="256"/>
+    <appender name="CONSOLE-LOG" class="ch.qos.logback.core.ConsoleAppender">
+        <layout class="ch.qos.logback.classic.PatternLayout">
+            <pattern>[%d{yyyy-MM-dd' 'HH:mm:ss}] [%C] [%t] [%L] [%-5p] %m%n</pattern>
+        </layout>
+    </appender>
+    <!--获取比info级别高(包括info级别)但除error级别的日志-->
+    <appender name="INFO-LOG" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>INFO</level>
+            <onMatch>DENY</onMatch>
+            <onMismatch>ACCEPT</onMismatch>
+        </filter>
+        <encoder>
+            <pattern>${FILE_LOG_PATTERN}</pattern>
+        </encoder>
+        <!--滚动策略-->
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!--路径-->
+            <fileNamePattern>${log.home}/info_%d.log</fileNamePattern>
+            <maxHistory>${log.max.history}</maxHistory>
+        </rollingPolicy>
+    </appender>
+
+    <appender name="ERROR-LOG" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>ERROR</level>
+        </filter>
+        <encoder>
+            <pattern>${FILE_LOG_PATTERN}</pattern>
+        </encoder>
+        <!--滚动策略-->
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!--路径-->
+            <fileNamePattern>${log.home}/error_%d.log</fileNamePattern>
+            <maxHistory>${log.max.history}</maxHistory>
+        </rollingPolicy>
+    </appender>
+
+    <!-- 异步输出 -->
+    <appender name="ASYNC-INFO" class="ch.qos.logback.classic.AsyncAppender">
+        <!-- 不丢失日志.默认的,如果队列的80%已满,则会丢弃TRACT、DEBUG、INFO级别的日志 -->
+        <discardingThreshold>0</discardingThreshold>
+        <!-- 更改默认的队列的深度,该值会影响性能.默认值为256 -->
+        <queueSize>${log.queueSize}</queueSize>
+        <!-- 添加附加的appender,最多只能添加一个 -->
+        <appender-ref ref="INFO-LOG"/>
+    </appender>
+
+    <appender name="ASYNC-ERROR" class="ch.qos.logback.classic.AsyncAppender">
+        <!-- 不丢失日志.默认的,如果队列的80%已满,则会丢弃TRACT、DEBUG、INFO级别的日志 -->
+        <discardingThreshold>0</discardingThreshold>
+        <!-- 更改默认的队列的深度,该值会影响性能.默认值为256 -->
+        <queueSize>${log.queueSize}</queueSize>
+        <!-- 添加附加的appender,最多只能添加一个 -->
+        <appender-ref ref="ERROR-LOG"/>
+    </appender>
+
+    <!-- 敏感操作日志文件输出配置 -->
+    <appender name="SENSITIVE_LOG_FILE_APPENDER" class="ch.qos.logback.core.FileAppender">
+        <file>${log.home}/sensitive-record.log</file>
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+    <logger name="com.syg.platform.function.base.other.SensitiveOperationLogger" level="INFO" additivity="false">
+        <appender-ref ref="SENSITIVE_LOG_FILE_APPENDER" />
+    </logger>
+
+    <appender name="CALL_IN_LOG" class="ch.qos.logback.core.FileAppender">
+        <file>${log.home}/call-in.log</file>
+        <encoder>
+            <pattern>%date %level [%thread] %logger{10} [%file:%line] - %msg%n</pattern>
+        </encoder>
+    </appender>
+    <logger name="com.syg.platform.aop.LoggingAspect" level="INFO" additivity="false">
+        <appender-ref ref="CALL_IN_LOG" />
+    </logger>
+
+    <appender name="CALL_OUT_LOG" class="ch.qos.logback.core.FileAppender">
+        <file>${log.home}/call-out.log</file>
+        <encoder>
+            <pattern>%date %level [%thread] %logger{10} [%file:%line] - %msg%n</pattern>
+        </encoder>
+    </appender>
+    <logger name="com.syg.platform.interceptor.ThirdCallOutInterceptor" level="INFO" additivity="false">
+        <appender-ref ref="CALL_OUT_LOG" />
+    </logger>
+
+    <!-- 文件输出，按天生成，用于特定类 -->
+    <appender name="inbound" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!-- 日志文件按天滚动 -->
+            <fileNamePattern>${log.home}/request/inbound/inbound-%d{yyyy-MM-dd}.log</fileNamePattern>
+            <!-- 保留60天的日志文件 -->
+            <maxHistory>60</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+    <appender name="INBOUND_ORDER_LOG" class="ch.qos.logback.core.FileAppender">
+        <file>${log.home}/inbound-order.log</file>
+        <encoder>
+            <pattern>%date %level [%thread] %logger{10} [%file:%line] - %msg%n</pattern>
+        </encoder>
+    </appender>
+    <logger name="com.syg.platform.function.service.impl.InboundOrderServiceImpl" level="INFO" additivity="false">
+        <appender-ref ref="INBOUND_ORDER_LOG" />
+        <appender-ref ref="inbound" />
+    </logger>
+
+    <!-- 文件输出，按天生成，用于特定类 -->
+    <appender name="delivery" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!-- 日志文件按天滚动 -->
+            <fileNamePattern>${log.home}/request/delivery/delivery-%d{yyyy-MM-dd}.log</fileNamePattern>
+            <!-- 保留60天的日志文件 -->
+            <maxHistory>60</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+    <appender name="DELIVERY_ORDER_LOG" class="ch.qos.logback.core.FileAppender">
+        <file>${log.home}/delivery-order.log</file>
+        <encoder>
+            <pattern>%date %level [%thread] %logger{10} [%file:%line] - %msg%n</pattern>
+        </encoder>
+    </appender>
+    <logger name="com.syg.platform.function.service.impl.DeliveryOrderServiceImpl" level="INFO" additivity="false">
+        <appender-ref ref="DELIVERY_ORDER_LOG" />
+        <appender-ref ref="delivery" />
+    </logger>
+
+    <appender name="Bill_LOG" class="ch.qos.logback.core.FileAppender">
+        <file>${log.home}/bill.log</file>
+        <encoder>
+            <pattern>%date %level [%thread] %logger{10} [%file:%line] - %msg%n</pattern>
+        </encoder>
+    </appender>
+    <logger name="com.syg.platform.function.service.bill.billTypeService.TotalBillingGenerateService" level="INFO" additivity="false">
+        <appender-ref ref="Bill_LOG" />
+    </logger>
+    <logger name="com.syg.platform.function.service.bill.billTypeService.AddServiceBillingGenerateService" level="INFO" additivity="false">
+        <appender-ref ref="Bill_LOG" />
+    </logger>
+    <logger name="com.syg.platform.function.service.bill.billTypeService.ExpressFeeBillingService" level="INFO" additivity="false">
+        <appender-ref ref="Bill_LOG" />
+    </logger>
+    <logger name="com.syg.platform.function.service.bill.billTypeService.ErpUsageFeeBillingService" level="INFO" additivity="false">
+        <appender-ref ref="Bill_LOG" />
+    </logger>
+    <logger name="com.syg.platform.function.service.bill.billTypeService.LowConsumptionSupplementBillingService" level="INFO" additivity="false">
+        <appender-ref ref="Bill_LOG" />
+    </logger>
+    <logger name="com.syg.platform.function.service.bill.billTypeService.OutboundBillingGenerateService" level="INFO" additivity="false">
+        <appender-ref ref="Bill_LOG" />
+    </logger>
+    <logger name="com.syg.platform.function.service.bill.billTypeService.RentalBillingService" level="INFO" additivity="false">
+        <appender-ref ref="Bill_LOG" />
+    </logger>
+    <logger name="com.syg.platform.function.service.bill.billTypeService.TaxAmountBillingService" level="INFO" additivity="false">
+        <appender-ref ref="Bill_LOG" />
+    </logger>
+
+    <logger name="com.autolink.push" additivity="false">
+        <level value="${log.level}" />
+        <appender-ref ref="ASYNC-INFO" />
+        <appender-ref ref="ASYNC-ERROR" />
+    </logger>
+    <logger name="org.hibernate.SQL" additivity="false" >
+        <level value="${log.level}" />
+        <appender-ref ref="CONSOLE-LOG" />
+        <appender-ref ref="ASYNC-INFO" />
+        <appender-ref ref="ASYNC-ERROR" />
+    </logger>
+    <logger name="org.hibernate.type.descriptor.sql.BasicBinder" additivity="false" level="TRACE" >
+        <level value="INFO" />
+        <appender-ref ref="CONSOLE-LOG" />
+        <appender-ref ref="ASYNC-INFO" />
+        <appender-ref ref="ASYNC-ERROR" />
+    </logger>
+
+    <logger name="com.baomidou.mybatisplus.core" level="${log.level}" />
+    <logger name="org.mybatis" level="${log.level}" />
+    <logger name="org.apache.ibatis" level="${log.level}" />
+
+    <root level="INFO">
+        <appender-ref ref="CONSOLE-LOG" />
+        <appender-ref ref="ASYNC-INFO" />
+        <appender-ref ref="ASYNC-ERROR" />
+    </root>
+</configuration>
