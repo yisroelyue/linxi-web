@@ -52,3 +52,8 @@ logging:
         sizeof:
           ObjectGraphWalker: error
 
+linxi:
+  fileHost: http://139.224.197.83
+  musicDir: /music
+#  projectDir: /linxi-music-web/res/html
+  projectDir: D:\linxi-music-web\res\html

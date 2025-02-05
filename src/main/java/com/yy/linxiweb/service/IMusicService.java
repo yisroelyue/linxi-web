@@ -15,4 +15,10 @@ import java.util.List;
  */
 public interface IMusicService extends IService<Music> {
     List<Music> getByIds(List<Integer> ids);
+
+    List<Music> getBySongSheetId(int id);
+
+    List<Music>  getLoveMusic();
+
+    void getCoverImgForMusic(Integer id);
 }

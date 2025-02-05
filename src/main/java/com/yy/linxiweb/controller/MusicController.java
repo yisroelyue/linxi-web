@@ -36,4 +36,29 @@ public class MusicController {
                 musicService.getByIds(ids)
         );
     }
+
+    @Operation(summary = "getBySongSheetId")
+    @GetMapping("getBySongSheetId")
+    public Response<List<Music>> list(@RequestParam int id) {
+        return new ResponseUtil<List<Music>>().success(
+                musicService.getBySongSheetId(id)
+        );
+    }
+
+    @Operation(summary = "getLoveMusic")
+    @GetMapping("getLoveMusic")
+    public Response<List<Music>> getLoveMusic() {
+        return new ResponseUtil<List<Music>>().success(
+                musicService.getLoveMusic()
+        );
+    }
+
+    @Operation(summary = "getCoverImgForMusic")
+    @GetMapping("getCoverImgForMusic")
+    public Response<String> getCoverImgForMusic(Integer id) {
+        musicService.getCoverImgForMusic(id);
+        return new ResponseUtil<String>().success();
+    }
+
+
 }

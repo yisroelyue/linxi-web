@@ -27,7 +27,7 @@ public class CodeGenerator {
 //    public static final String DB_PASSWORD = "123456";
     // 多个用表用 ， 拼接
     //public static final String TABLE_NAMES= "t_sys_entitlement,t_sys_role,t_sys_user,t_sys_user_auth";
-    public static final String TABLE_NAMES = "music_sheet";
+    public static final String TABLE_NAMES = "love_music";
 
     public static void main(String[] args) {
         FastAutoGenerator.create(DB_URL, DB_USERNAME, DB_PASSWORD)

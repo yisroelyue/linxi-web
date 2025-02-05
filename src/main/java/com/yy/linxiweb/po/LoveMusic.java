@@ -17,49 +17,22 @@ import lombok.experimental.Accessors;
  * </p>
  *
  * @author yueyi
- * @since 2025-01-17
+ * @since 2025-01-27
  */
 @Getter
 @Setter
 @Accessors(chain = true)
-@TableName("music")
-@Schema(name = "Music", description = "")
-public class Music implements Serializable {
+@TableName("love_music")
+@Schema(name = "LoveMusic", description = "")
+public class LoveMusic implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
     @TableId(value = "id", type = IdType.AUTO)
     private Integer id;
 
-    @TableField("fileName")
-    private String fileName;
-
-    @TableField("filePath")
-    private String filePath;
-
-    @TableField("lyricPath")
-    private String lyricPath;
-
-    @TableField("icPath")
-    private String icPath;
-
-    @TableField("artist")
-    private String artist;
-
-    @TableField("album")
-    private String album;
-
-    @TableField("genre")
-    private String genre;
-
-    @TableField("duration")
-    private String duration;
-
-    @TableField("releaseDate")
-    private Date releaseDate;
-
-    @TableField("fileSize")
-    private Long fileSize;
+    @TableField("musicId")
+    private Integer musicId;
 
     @TableField("createdAt")
     private Date createdAt;

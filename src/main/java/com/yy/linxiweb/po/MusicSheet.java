@@ -31,11 +31,14 @@ public class MusicSheet implements Serializable {
     @TableId(value = "id", type = IdType.AUTO)
     private Integer id;
 
-    @TableField("musicsheetName")
-    private String musicsheetName;
+    @TableField("name")
+    private String name;
 
     @TableField("description")
     private String description;
+
+    @TableField("icUrl")
+    private String icUrl;
 
     @TableField("userId")
     private Integer userId;
